@@ -107,10 +107,10 @@ Location: `:auth:data`, `:run:data`, `:run:network`, `:core:data`, `:core:databa
 
 Responsibilities:
 
--Implement domain interfaces with concrete technologies
--Coordinate local (Room) and remote (Ktor) data sources OfflineFirstRunRepository.kt:28-36
--Data mapping between layers (DTOs ↔ Domain Models ↔ Entities)
--Offline-first synchronization logic OfflineFirstRunRepository.kt:53-82
+- Implement domain interfaces with concrete technologies
+- Coordinate local (Room) and remote (Ktor) data sources
+- Data mapping between layers (DTOs ↔ Domain Models ↔ Entities)
+- Offline-first synchronization logic
 
 Example:
 
