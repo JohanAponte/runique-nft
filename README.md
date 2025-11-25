@@ -51,31 +51,43 @@ Runique follows a multi-module, clean architecture approach with these core prin
   modules
 - **Build Standardization**:    Custom Gradle convention plugins enforce consistent configurations
 
-### Module Structure
+### Key Architectural Patterns
 
-runique/
-├── app/ # Application entry point
-├── auth/ # Authentication feature
-│ ├── data/ # Auth data sources & repositories
-│ ├── domain/ # Auth business logic
-│ └── presentation/ # Auth UI screens
-├── run/ # Run tracking feature
-│ ├── data/ # Run data sources & repositories
-│ ├── domain/ # Run business logic
-│ ├── presentation/ # Run UI screens
-│ ├── location/ # GPS tracking implementation
-│ └── network/ # Run API clients
-├── analytics/ # Analytics feature (dynamic)
-│ ├── data/
-│ ├── domain/
-│ ├── presentation/
-│ └── analytics_feature/ # Dynamic feature module
-└── core/ # Shared infrastructure
-├── data/ # HTTP client, session storage
-├── database/ # Room database configuration
-├── domain/ # Shared domain models
-├── presentation/
-│ ├── designsystem/ # UI components & theme
-│ └── ui/ # Shared UI utilities
-├── test/ # Test utilities
-└── android-test/ # Android test utilities
+- **Multi-module architecture** with feature-based separation<cite />
+- **Offline-first data strategy** with local database as source of truth<cite />
+- **Clean Architecture layers**: Domain, Data, and Presentation<cite />
+- **MVI pattern** for UI state management<cite />
+- **Repository pattern** with offline-first implementation<cite />
+
+## Getting Started
+
+### Prerequisites
+
+- Android Studio Hedgehog or later
+- JDK 17 or later
+- Android SDK with API 24-35 support<cite />
+- Google Maps API key (for map features)
+
+### Setup
+
+1. Clone the repository:
+
+```bash  
+git clone https://github.com/JohanAponte/runique-ft.git  
+cd runique
+```
+
+2. Open the project in Android Studio.
+3. Create a `local.properties` file in the root directory and add your Google Maps API key:
+
+```properties
+googleMapsApiKey=YOUR_API_KEY
+```
+4. Build and run the app on an emulator or physical device.
+5. Register a new account and start tracking your runs!
+6. (Optional) To run tests, use the Gradle tasks:
+
+```bash
+./gradlew test           # Run unit tests
+./gradlew connectedAndroidTest  # Run instrumentation tests
+```
