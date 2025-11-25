@@ -58,6 +58,47 @@ Runique follows a multi-module, clean architecture approach with these core prin
 - **Clean Architecture layers**: Domain, Data, and Presentation<cite />
 - **Repository pattern** with offline-first implementation<cite />
 
+# Layer Responsibilities
+
+## 1. Presentation Layer
+
+**Location:**  
+`:auth:presentation`, `:run:presentation`, `:analytics:presentation`
+
+### Responsibilities
+
+- UI state management via **ViewModels**
+- Handling user actions
+- UI rendering using **Jetpack Compose**
+- **Dependencies:** Only depends on *domain interfaces*, never concrete implementations
+
+### Example
+
+```kotlin
+class RunOverviewViewModel(
+    private val runRepository: RunRepository,        // Domain interface
+    private val syncRunScheduler: SyncRunScheduler,  // Domain interface
+    private val sessionStorage: SessionStorage        // Domain interface
+) : ViewModel()
+```
+
+2. Domain Layer
+   Location: `:auth:domain`, `:run:domain`, `:analytics:domain`, `:core:domain`
+
+Responsibilities:
+
+- Define repository and data source interfaces
+- Contain pure business logic and domain models
+- No Android framework dependencies
+- Use type-safe error handling (Result<T, E>)
+
+Dependencies: None — pure Kotlin/Java
+
+Key Components:
+-**Interfaces:** Contracts for data operations
+-**Domain Models:** Pure data classes (e.g., Run, Location)
+-**Domain Services:** Business logic utilities
+
 # 📲 How To Run
 
 ### Prerequisites
@@ -82,6 +123,7 @@ cd runique
 ```properties
 googleMapsApiKey=YOUR_API_KEY
 ```
+
 4. Build and run the app on an emulator or physical device.
 5. Register a new account and start tracking your runs!
 6. (Optional) To run tests, use the Gradle tasks:
