@@ -60,7 +60,7 @@ Runique follows a multi-module, clean architecture approach with these core prin
 
 # Layer Responsibilities
 
-## 1. Presentation Layer
+## 🎨 1. Presentation Layer
 
 **Location:**  
 `:auth:presentation`, `:run:presentation`, `:analytics:presentation`
@@ -82,8 +82,9 @@ class RunOverviewViewModel(
 ) : ViewModel()
 ```
 
-2. Domain Layer
-   Location: `:auth:domain`, `:run:domain`, `:analytics:domain`, `:core:domain`
+## 🧠2. Domain Layer
+
+Location: `:auth:domain`, `:run:domain`, `:analytics:domain`, `:core:domain`
 
 Responsibilities:
 
@@ -98,6 +99,33 @@ Key Components:
 -**Interfaces:** Contracts for data operations
 -**Domain Models:** Pure data classes (e.g., Run, Location)
 -**Domain Services:** Business logic utilities
+
+3. 📊Data Layer
+   Location: `:auth:data`, `:run:data`, `:run:network`, `:core:data`, `:core:database`
+
+Responsibilities:
+
+-Implement domain interfaces with concrete technologies
+-Coordinate local (Room) and remote (Ktor) data sources OfflineFirstRunRepository.kt:28-36
+-Data mapping between layers (DTOs ↔ Domain Models ↔ Entities)
+-Offline-first synchronization logic OfflineFirstRunRepository.kt:53-82
+
+Example:
+
+```kotlin
+class OfflineFirstRunRepository(
+    private val localRunDataSource: LocalRunDataSource,  // Domain interface  
+    private val remoteRunDataSource: RemoteRunDataSource  // Domain interface  
+) : RunRepository
+```
+
+# Dependency Rules
+
+| **Layer**    | **Can Depend On**          | **Cannot Depend On**                          |
+|--------------|----------------------------|-----------------------------------------------|
+| Presentation | Domain interfaces & models | Data implementations, Database entities, DTOs |
+| Domain       | Nothing (pure Kotlin)      | Presentation, Data, Android Framework         |
+| Data         | Domain interfaces & models | Presentation layer                            |
 
 # 📲 How To Run
 
