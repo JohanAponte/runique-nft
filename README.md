@@ -14,7 +14,7 @@ including multi-module architecture, clean architecture patterns, and offline-fi
 - **Analytics Dashboard**: Detailed statistics and insights (dynamic feature module)
 - **Background Service**: Continuous tracking even when app is in background
 
-## Tech Stack
+## 🖲️ Tech Stack
 
 ### Core Technologies
 
@@ -50,3 +50,32 @@ Runique follows a multi-module, clean architecture approach with these core prin
 - **Modular Testing**:    Test utilities in `core:test` and `core:android-test` are shared across
   modules
 - **Build Standardization**:    Custom Gradle convention plugins enforce consistent configurations
+
+### Module Structure
+
+runique/
+├── app/ # Application entry point
+├── auth/ # Authentication feature
+│ ├── data/ # Auth data sources & repositories
+│ ├── domain/ # Auth business logic
+│ └── presentation/ # Auth UI screens
+├── run/ # Run tracking feature
+│ ├── data/ # Run data sources & repositories
+│ ├── domain/ # Run business logic
+│ ├── presentation/ # Run UI screens
+│ ├── location/ # GPS tracking implementation
+│ └── network/ # Run API clients
+├── analytics/ # Analytics feature (dynamic)
+│ ├── data/
+│ ├── domain/
+│ ├── presentation/
+│ └── analytics_feature/ # Dynamic feature module
+└── core/ # Shared infrastructure
+├── data/ # HTTP client, session storage
+├── database/ # Room database configuration
+├── domain/ # Shared domain models
+├── presentation/
+│ ├── designsystem/ # UI components & theme
+│ └── ui/ # Shared UI utilities
+├── test/ # Test utilities
+└── android-test/ # Android test utilities
