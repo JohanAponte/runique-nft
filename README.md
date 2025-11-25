@@ -19,8 +19,15 @@ including multi-module architecture, clean architecture patterns, and offline-fi
 ## Intro & Login/Registration Screens
 
 <p align="center">
-<img src="assets/Intro.png" alt="Login Screen" width="200"/>
-<img src="assets/Registration.png" alt="Registration Screen" width="200"/>
+<img src="assets/Intro.png" alt="Login Screen" width="250"/>
+<img src="assets/Registration.png" alt="Registration Screen" width="250"/>
+</p>
+
+## Run Overview & Permission Screens
+<p align="center">
+<img src="assets/RunOverview.png" alt="Run Overview Screen" width="250"/>
+<img src="assets/LocationPermission.png.png" alt="Permissions Screen" width="250"/>
+<img src="assets/NotificationPermission.png" alt="Notification Permission Screen" width="250"/>
 </p>
 
 # 🖲️ Tech Stack
