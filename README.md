@@ -59,7 +59,7 @@ Runique follows a multi-module, clean architecture approach with these core prin
 - **MVI pattern** for UI state management<cite />
 - **Repository pattern** with offline-first implementation<cite />
 
-## Getting Started
+# 📲 How To Run
 
 ### Prerequisites
 
