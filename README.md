@@ -18,6 +18,7 @@ including multi-module architecture, clean architecture patterns, and offline-fi
 
 ## Login Screen
 <img src="assets/Intro.png" alt="Login Screen" width="150"/>
+<img src="assets/Registration.png alt="Registration Screen" width="150"/>
 
 
 # 🖲️ Tech Stack
