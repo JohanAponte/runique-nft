@@ -56,7 +56,6 @@ Runique follows a multi-module, clean architecture approach with these core prin
 - **Multi-module architecture** with feature-based separation<cite />
 - **Offline-first data strategy** with local database as source of truth<cite />
 - **Clean Architecture layers**: Domain, Data, and Presentation<cite />
-- **MVI pattern** for UI state management<cite />
 - **Repository pattern** with offline-first implementation<cite />
 
 # 📲 How To Run
@@ -73,7 +72,7 @@ Runique follows a multi-module, clean architecture approach with these core prin
 1. Clone the repository:
 
 ```bash  
-git clone https://github.com/JohanAponte/runique-ft.git  
+git clone https://github.com/JohanAponte/runique.git  
 cd runique
 ```
 
