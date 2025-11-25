@@ -82,7 +82,7 @@ class RunOverviewViewModel(
 ) : ViewModel()
 ```
 
-## 🧠2. Domain Layer
+## 🧠 2. Domain Layer
 
 Location: `:auth:domain`, `:run:domain`, `:analytics:domain`, `:core:domain`
 
@@ -100,8 +100,9 @@ Key Components:
 -**Domain Models:** Pure data classes (e.g., Run, Location)
 -**Domain Services:** Business logic utilities
 
-3. 📊Data Layer
-   Location: `:auth:data`, `:run:data`, `:run:network`, `:core:data`, `:core:database`
+## 📊 3. Data Layer
+
+Location: `:auth:data`, `:run:data`, `:run:network`, `:core:data`, `:core:database`
 
 Responsibilities:
 
