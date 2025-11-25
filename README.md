@@ -5,7 +5,7 @@ application enables users to track running activities with GPS location tracking
 and synchronize data across devices. The app follows modern Android development practices
 including multi-module architecture, clean architecture patterns, and offline-first data management.
 
-## 🚀 Features
+# 🚀 Features
 
 - **User Authentication**: Secure registration and login with encrypted session storage
 - **GPS Run Tracking**: Real-time activity tracking with distance, pace, and elevation metrics
@@ -13,6 +13,12 @@ including multi-module architecture, clean architecture patterns, and offline-fi
 - **Run History**: View and analyze past running activities
 - **Analytics Dashboard**: Detailed statistics and insights (dynamic feature module)
 - **Background Service**: Continuous tracking even when app is in background
+
+# 📸 Screenshots
+
+## Login Screen
+<img src="assets/Intro.png" alt="Login Screen" width="150"/>
+
 
 # 🖲️ Tech Stack
 
@@ -58,7 +64,7 @@ Runique follows a multi-module, clean architecture approach with these core prin
 - **Clean Architecture layers**: Domain, Data, and Presentation<cite />
 - **Repository pattern** with offline-first implementation<cite />
 
-# Layer Responsibilities
+# 𝌮 Layer Responsibilities
 
 ## 🎨 1. Presentation Layer
 
