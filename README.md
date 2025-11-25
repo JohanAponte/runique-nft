@@ -96,9 +96,10 @@ Responsibilities:
 Dependencies: None — pure Kotlin/Java
 
 Key Components:
--**Interfaces:** Contracts for data operations
--**Domain Models:** Pure data classes (e.g., Run, Location)
--**Domain Services:** Business logic utilities
+
+- **Interfaces:** Contracts for data operations
+- **Domain Models:** Pure data classes (e.g., Run, Location)
+- **Domain Services:** Business logic utilities
 
 ## 📊 3. Data Layer
 
