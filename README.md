@@ -25,7 +25,8 @@ including multi-module architecture, clean architecture patterns, and offline-fi
 
 ## Run Overview & Permission Screens
 <p align="center">
-<img src="assets/RunOverView.png" alt="Run Overview Screen" width="250"/>
+<img src="assets/OverViewMaps.png" alt="Run Overview Screen" width="250"/>
+<img src="assets/RunOverView.png" alt="Run Overview Screen Error" width="250"/>
 <img src="assets/LocationPermission.png" alt="Permissions Screen" width="250"/>
 <img src="assets/NotificationPermission.png" alt="Notification Permission Screen" width="250"/>
 </p>
