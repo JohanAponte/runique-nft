@@ -30,6 +30,14 @@ including multi-module architecture, clean architecture patterns, and offline-fi
 <img src="assets/NotificationPermission.png" alt="Notification Permission Screen" width="250"/>
 </p>
 
+## Active Run Tracking & Run History Screens
+<p align="center">
+<img src="assets/Location.png" alt="Active Run Tracking Screen" width="250"/>
+<img src="assets/OnGoingRoute.png" alt="Run History Screen" width="250"/>
+<img src="assets/NotificationApp.png" alt="Notification During Run" width="250"/>
+<img src="assets/FinishingRoute.png" alt="Finishing Run Screen" width="250"/>
+</p>
+
 # 🖲️ Tech Stack
 
 ### Core Technologies
