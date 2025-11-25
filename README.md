@@ -14,7 +14,7 @@ including multi-module architecture, clean architecture patterns, and offline-fi
 - **Analytics Dashboard**: Detailed statistics and insights (dynamic feature module)
 - **Background Service**: Continuous tracking even when app is in background
 
-## 🖲️ Tech Stack
+# 🖲️ Tech Stack
 
 ### Core Technologies
 
