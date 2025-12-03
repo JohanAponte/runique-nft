@@ -8,4 +8,5 @@
     <string name="analytics">Analytics</string>
     <string name="logout">Logout</string>
     <string name="active_run">Active run</string>
+    <string name="youre_logged_in">You\'re logged in!</string>
 </resources>

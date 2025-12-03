@@ -1,7 +1,9 @@
 package com.example.run.presentation.run_overview
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,9 +11,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
@@ -27,6 +33,7 @@ import com.example.core.presentation.designsystem.components.RuniqueFloatingActi
 import com.example.core.presentation.designsystem.components.RuniqueScaffold
 import com.example.core.presentation.designsystem.components.RuniqueToolbar
 import com.example.core.presentation.designsystem.components.util.DropDownItem
+import com.example.core.presentation.designsystem.components.util.RuniqueMessageSnackBar
 import com.example.run.presentation.run_overview.components.RunListItem
 import org.koin.androidx.compose.koinViewModel
 
@@ -35,7 +42,8 @@ fun RunOverviewScreenRoot(
     onStartRunClick: () -> Unit,
     onLogoutClick: () -> Unit,
     onAnalyticsClick: () -> Unit,
-    viewModel: RunOverviewViewModel = koinViewModel()
+    viewModel: RunOverviewViewModel = koinViewModel(),
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     RunOverviewScreen(
         state = viewModel.state,
@@ -47,7 +55,8 @@ fun RunOverviewScreenRoot(
                 else -> Unit
             }
             viewModel.onAction(action)
-        }
+        },
+        snackBarHostState = snackBarHostState
     )
 }
 
@@ -55,7 +64,8 @@ fun RunOverviewScreenRoot(
 @Composable
 private fun RunOverviewScreen(
     state: RunOverviewState,
-    onAction: (RunOverviewAction) -> Unit
+    onAction: (RunOverviewAction) -> Unit,
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val topAppBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
@@ -103,29 +113,49 @@ private fun RunOverviewScreen(
             )
         }
     ) { padding ->
-        LazyColumn(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .padding(horizontal = 16.dp),
-            contentPadding = padding,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(
-                items = state.runs,
-                key = { it.id }
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
+                    .padding(horizontal = 16.dp),
+                contentPadding = padding,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                RunListItem(
-                    runUi = it,
-                    onDeleteClick = {
-                        onAction(RunOverviewAction.DeleteRun(it))
-                    },
-                    modifier = Modifier.animateItem()
-                )
+                items(
+                    items = state.runs,
+                    key = { it.id }
+                ) {
+                    RunListItem(
+                        runUi = it,
+                        onDeleteClick = {
+                            onAction(RunOverviewAction.DeleteRun(it))
+                        },
+                        modifier = Modifier.animateItem()
+                    )
+                }
             }
 
-        }
+            SnackbarHost(
+                modifier = Modifier.align(Alignment.TopCenter),
+                hostState = snackBarHostState,
+                snackbar = { snackBarData ->
+                    val isErrorMessage =
+                        snackBarData.visuals.message != stringResource(id = R.string.youre_logged_in)
 
+                    RuniqueMessageSnackBar(
+                        snackBarData = snackBarData,
+                        isErrorMessage = isErrorMessage,
+                        modifier = Modifier
+                            .padding(padding)
+                            .offset(y = (-8).dp)
+                    )
+                }
+            )
+        }
     }
 }
 

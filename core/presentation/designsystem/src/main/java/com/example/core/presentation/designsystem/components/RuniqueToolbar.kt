@@ -102,6 +102,7 @@ fun RuniqueToolbar(
                                 modifier = Modifier
                                     .clickable {
                                         onMenuItemClicked(index)
+                                        isDropDownOpen = false
                                     }
                                     .fillMaxWidth()
                                     .padding(16.dp)

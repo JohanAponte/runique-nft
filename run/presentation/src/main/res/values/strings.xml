@@ -22,4 +22,5 @@
     <string name="avg_speed">ø Speed</string>
     <string name="totel_elevation">Total elevation</string>
     <string name="delete">Delete</string>
+    <string name="youre_logged_in">You\'re logged in!</string>
 </resources>

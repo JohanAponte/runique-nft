@@ -1,5 +1,7 @@
 package com.example.runique
 
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
@@ -14,6 +16,9 @@ import com.example.auth.presentation.register.RegisterScreenRoot
 import com.example.run.presentation.active_run.ActiveRunScreenRoot
 import com.example.run.presentation.active_run.services.ActiveRunService
 import com.example.run.presentation.run_overview.RunOverviewScreenRoot
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 sealed interface Routes {
     object Auth {
@@ -40,14 +45,27 @@ fun NavigationRoot(
         navController = navController,
         startDestination = if (isLoggedIn) Routes.Run.NAV_ROUTE else Routes.Auth.NAV_ROUTE,
     ) {
-        authGraph(navController)
-        runGraph(navController, onAnalytics)
+        val snackBarScope = CoroutineScope(Dispatchers.Main)
+        val sharedSnackBarHostState = SnackbarHostState()
+
+        authGraph(
+            navController = navController,
+            snackBarScope = snackBarScope,
+            sharedSnackBarHostState = sharedSnackBarHostState,
+        )
+        runGraph(
+            navController = navController,
+            onAnalytics = onAnalytics,
+            sharedSnackBarHostSate = sharedSnackBarHostState,
+        )
     }
 
 }
 
 private fun NavGraphBuilder.authGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    sharedSnackBarHostState: SnackbarHostState = SnackbarHostState(),
+    snackBarScope: CoroutineScope = CoroutineScope(Dispatchers.Main)
 ) {
     navigation(
         startDestination = Routes.Auth.INTRO,
@@ -64,6 +82,8 @@ private fun NavGraphBuilder.authGraph(
             )
         }
         composable(Routes.Auth.REGISTER) {
+            val localContext = LocalContext.current
+
             RegisterScreenRoot(
                 onSignInClick = {
                     navController.navigate(Routes.Auth.LOGIN) {
@@ -74,18 +94,37 @@ private fun NavGraphBuilder.authGraph(
                         restoreState = true
                     }
                 },
+                snackBarHostState = sharedSnackBarHostState,
                 onSuccessfulRegistration = {
-                    navController.navigate(Routes.Auth.LOGIN)
+                    navController.navigate(Routes.Auth.LOGIN){
+                        popUpTo(Routes.Auth.REGISTER) {
+                            inclusive = true
+                        }
+                    }
+                    snackBarScope.launch {
+                        sharedSnackBarHostState.showSnackbar(
+                            message = localContext.getString(R.string.registration_successful),
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
                 }
             )
         }
         composable(Routes.Auth.LOGIN) {
+            val localContext = LocalContext.current
+
             LoginScreenRoot(
-                onLoginSuccess = {
+                onLoginSuccess = { snackBarHostState ->
                     navController.navigate(Routes.Run.NAV_ROUTE) {
                         popUpTo(Routes.Auth.NAV_ROUTE) {
                             inclusive = true
                         }
+                    }
+                    snackBarScope.launch {
+                        snackBarHostState.showSnackbar(
+                            message = localContext.getString(R.string.youre_logged_in),
+                            duration = SnackbarDuration.Short,
+                        )
                     }
                 },
                 onSignUpClick = {
@@ -96,7 +135,8 @@ private fun NavGraphBuilder.authGraph(
                         }
                         restoreState = true
                     }
-                }
+                },
+                snackBarHostState = sharedSnackBarHostState
             )
         }
     }
@@ -104,7 +144,8 @@ private fun NavGraphBuilder.authGraph(
 
 private fun NavGraphBuilder.runGraph(
     navController: NavHostController,
-    onAnalytics: () -> Unit
+    onAnalytics: () -> Unit,
+    sharedSnackBarHostSate: SnackbarHostState = SnackbarHostState()
 ) {
     navigation(
         startDestination = Routes.Run.RUN_OVERVIEW,
@@ -119,11 +160,12 @@ private fun NavGraphBuilder.runGraph(
                 onAnalyticsClick = onAnalytics,
                 onLogoutClick = {
                     navController.navigate(Routes.Auth.NAV_ROUTE) {
-                        popUpTo("run") {
+                        popUpTo(Routes.Run.NAV_ROUTE) {
                             inclusive = true
                         }
                     }
-                }
+                },
+                snackBarHostState = sharedSnackBarHostSate
             )
         }
         composable(
