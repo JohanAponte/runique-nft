@@ -15,6 +15,21 @@ import com.example.run.presentation.active_run.ActiveRunScreenRoot
 import com.example.run.presentation.active_run.services.ActiveRunService
 import com.example.run.presentation.run_overview.RunOverviewScreenRoot
 
+sealed interface Routes {
+    object Auth {
+        const val NAV_ROUTE = "auth"
+        const val INTRO = "intro"
+        const val REGISTER = "register"
+        const val LOGIN = "login"
+    }
+
+    object Run {
+        const val NAV_ROUTE = "run"
+        const val RUN_OVERVIEW = "overview"
+        const val ACTIVE_RUN = "active_run"
+    }
+}
+
 @Composable
 fun NavigationRoot(
     navController: NavHostController,
@@ -23,7 +38,7 @@ fun NavigationRoot(
 ) {
     NavHost(
         navController = navController,
-        startDestination = if (isLoggedIn) "run" else "auth",
+        startDestination = if (isLoggedIn) Routes.Run.NAV_ROUTE else Routes.Auth.NAV_ROUTE,
     ) {
         authGraph(navController)
         runGraph(navController, onAnalytics)
@@ -35,24 +50,24 @@ private fun NavGraphBuilder.authGraph(
     navController: NavHostController
 ) {
     navigation(
-        startDestination = "intro",
-        route = "auth"
+        startDestination = Routes.Auth.INTRO,
+        route = Routes.Auth.NAV_ROUTE,
     ) {
-        composable(route = "intro") {
+        composable(Routes.Auth.INTRO) {
             IntroScreenRoot(
                 onSignUpClick = {
-                    navController.navigate(route = "register")
+                    navController.navigate(Routes.Auth.REGISTER)
                 },
                 onSignInClick = {
-                    navController.navigate(route = "login")
+                    navController.navigate(Routes.Auth.LOGIN)
                 }
             )
         }
-        composable(route = "register") {
+        composable(Routes.Auth.REGISTER) {
             RegisterScreenRoot(
                 onSignInClick = {
-                    navController.navigate(route = "login") {
-                        popUpTo("register") {
+                    navController.navigate(Routes.Auth.LOGIN) {
+                        popUpTo(Routes.Auth.REGISTER) {
                             inclusive = true
                             saveState = true
                         }
@@ -60,22 +75,22 @@ private fun NavGraphBuilder.authGraph(
                     }
                 },
                 onSuccessfulRegistration = {
-                    navController.navigate(route = "login")
+                    navController.navigate(Routes.Auth.LOGIN)
                 }
             )
         }
-        composable(route = "login") {
+        composable(Routes.Auth.LOGIN) {
             LoginScreenRoot(
                 onLoginSuccess = {
-                    navController.navigate(route = "run") {
-                        popUpTo("auth") {
+                    navController.navigate(Routes.Run.NAV_ROUTE) {
+                        popUpTo(Routes.Auth.NAV_ROUTE) {
                             inclusive = true
                         }
                     }
                 },
                 onSignUpClick = {
-                    navController.navigate(route = "register") {
-                        popUpTo("login") {
+                    navController.navigate(Routes.Auth.REGISTER) {
+                        popUpTo(Routes.Auth.LOGIN) {
                             inclusive = true
                             saveState = true
                         }
@@ -92,18 +107,18 @@ private fun NavGraphBuilder.runGraph(
     onAnalytics: () -> Unit
 ) {
     navigation(
-        startDestination = "run_overview",
-        route = "run"
+        startDestination = Routes.Run.RUN_OVERVIEW,
+        route = Routes.Run.NAV_ROUTE
     ) {
-        composable(route = "run_overview") {
+        composable(Routes.Run.RUN_OVERVIEW) {
             RunOverviewScreenRoot(
                 onStartRunClick =
                     {
-                        navController.navigate(route = "active_run")
+                        navController.navigate(Routes.Run.ACTIVE_RUN)
                     },
                 onAnalyticsClick = onAnalytics,
                 onLogoutClick = {
-                    navController.navigate(route = "auth") {
+                    navController.navigate(Routes.Auth.NAV_ROUTE) {
                         popUpTo("run") {
                             inclusive = true
                         }
@@ -112,7 +127,7 @@ private fun NavGraphBuilder.runGraph(
             )
         }
         composable(
-            route = "active_run", deepLinks = listOf(
+            route = Routes.Run.ACTIVE_RUN, deepLinks = listOf(
                 navDeepLink {
                     uriPattern = "runique://active_run"
                 }
