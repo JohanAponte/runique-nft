@@ -9,13 +9,15 @@ import com.example.core.presentation.ui.toFormattedPace
 import com.example.run.presentation.run_overview.model.RunUi
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 fun Run.toRunUi(): RunUi {
     val dateTimeInLocalTime = dateTimeUtc
         .withZoneSameInstant(ZoneId.systemDefault())
     val formattedDateTime = DateTimeFormatter
-        .ofPattern("MMM dd, yyyy - hh:mma")
+        .ofPattern("MMM dd, yyyy - hh:mm a")
         .format(dateTimeInLocalTime)
+        .replaceFirstChar { it.uppercase(Locale.getDefault()) }
 
     val distanceKm = distanceMeters / 1000.0
 

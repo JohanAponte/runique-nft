@@ -1,7 +1,7 @@
 package com.example.run.presentation.run_overview
 
-import com.example.run.presentation.run_overview.model.RunUi
+import com.example.core.domain.run.Run
 
 data class RunOverviewState(
-    val runs: List<RunUi> = emptyList()
+    val runs: List<Run> = emptyList()
 )

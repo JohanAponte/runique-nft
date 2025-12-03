@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.core.domain.SessionStorage
 import com.example.core.domain.run.RunRepository
 import com.example.core.domain.run.SyncRunScheduler
-import com.example.run.presentation.run_overview.mapper.toRunUi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -33,8 +32,8 @@ class RunOverviewViewModel(
         }
 
         runRepository.getRuns().onEach { runs ->
-            val runsUi = runs.map { it.toRunUi() }
-            state = state.copy(runs = runsUi)
+            //val runsUi = runs.map { it.toRunUi() }
+            state = state.copy(runs = runs)
         }.launchIn(viewModelScope)
 
         viewModelScope.launch {
@@ -56,7 +55,7 @@ class RunOverviewViewModel(
 
             is RunOverviewAction.DeleteRun -> {
                 viewModelScope.launch {
-                    runRepository.deleteRun(action.runUi.id)
+                    runRepository.deleteRun(action.run.id!!)
                 }
             }
         }

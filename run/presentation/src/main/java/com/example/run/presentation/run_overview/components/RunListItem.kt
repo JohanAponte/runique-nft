@@ -34,6 +34,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -44,26 +45,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
+import com.example.core.domain.location.Location
+import com.example.core.domain.run.Run
 import com.example.core.presentation.designsystem.CalendarIcon
+import com.example.core.presentation.designsystem.LocationIcon
 import com.example.core.presentation.designsystem.RunOutlinedIcon
 import com.example.core.presentation.designsystem.RuniqueTheme
+import com.example.core.presentation.ui.getLocationName
 import com.example.run.presentation.R
+import com.example.run.presentation.run_overview.mapper.toRunUi
 import com.example.run.presentation.run_overview.model.RunDataUi
 import com.example.run.presentation.run_overview.model.RunUi
+import java.time.ZonedDateTime
 import kotlin.math.max
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun RunListItem(
-    runUi: RunUi,
+    run: Run,
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
+    val runUi = remember {
+        run.toRunUi()
+    }
+
     var showDropDown by remember {
         mutableStateOf(false)
     }
@@ -78,6 +94,18 @@ fun RunListItem(
         label = ""
     )
 
+    var locationName by remember {
+        mutableStateOf<String?>(null)
+    }
+
+    LaunchedEffect(key1 = true) {
+        run.getLocationName(
+            context = context,
+        ) { name ->
+            locationName = name
+        }
+    }
+
     Box {
         Column(
             modifier = modifier
@@ -90,19 +118,24 @@ fun RunListItem(
                     }
                 )
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             MapImage(imageUrl = runUi.mapPictureUrl)
+            Spacer(modifier = Modifier.height(16.dp))
+
             RunningTimeSection(
                 duration = runUi.duration,
                 modifier = Modifier.fillMaxWidth()
             )
+            Spacer(modifier = Modifier.height(16.dp))
+
             HorizontalDivider(
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
             )
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RunningDateSection(dateTime = runUi.dateTime)
@@ -135,8 +168,15 @@ fun RunListItem(
                         run = runUi,
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Spacer(modifier = Modifier.height(10.dp))
                 }
+            }
+
+            locationName?.let { location ->
+                LocationNameSection(
+                    locationName = location,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
             }
         }
         DropdownMenu(
@@ -335,21 +375,43 @@ private fun DataGridCell(
     }
 }
 
+@Composable
+fun LocationNameSection(
+    locationName: String,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = LocationIcon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = locationName,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize = 12.sp
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun RunListItemPreview() {
     RuniqueTheme {
         RunListItem(
-            runUi = RunUi(
-                id = "1",
-                duration = "1:30:00",
-                dateTime = "May 22, 2024 - 01:27am",
-                distance = "10 km",
-                pace = "5:00 /km",
-                avgSpeed = "12 km/h",
-                maxSpeed = "15 km/h",
-                totalElevation = "100 m",
-                mapPictureUrl = null
+            run = Run(
+                id = "123",
+                duration = 10.minutes + 30.seconds,
+                dateTimeUtc = ZonedDateTime.now(),
+                distanceMeters = 5500,
+                location = Location(0.0, 0.0),
+                maxSpeedKmh = 15.0,
+                totalElevationMeters = 123,
+                mapPictureUrl = null,
             ),
             onDeleteClick = { /*TODO*/ }
         )
