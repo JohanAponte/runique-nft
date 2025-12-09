@@ -7,6 +7,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,10 +25,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,8 +49,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import coil.compose.SubcomposeAsyncImage
 import com.example.core.domain.location.Location
 import com.example.core.domain.run.Run
@@ -65,6 +67,7 @@ import com.example.run.presentation.run_overview.model.RunDataUi
 import com.example.run.presentation.run_overview.model.RunUi
 import java.time.ZonedDateTime
 import kotlin.math.max
+import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -80,7 +83,7 @@ fun RunListItem(
         run.toRunUi()
     }
 
-    var showDropDown by remember {
+    var showDeleteDropDown by remember {
         mutableStateOf(false)
     }
 
@@ -114,7 +117,7 @@ fun RunListItem(
                 .combinedClickable(
                     onClick = {},
                     onLongClick = {
-                        showDropDown = true
+                        showDeleteDropDown = true
                     }
                 )
                 .padding(16.dp),
@@ -179,23 +182,51 @@ fun RunListItem(
                 )
             }
         }
-        DropdownMenu(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface),
-            expanded = showDropDown,
-            onDismissRequest = { showDropDown = false }) {
-            DropdownMenuItem(
-                modifier = Modifier.height(18.dp),
-                text = {
-                    Text(
-                        text = stringResource(id = R.string.delete)
-                    )
-                },
-                onClick = {
-                    showDropDown = false
-                    onDeleteClick()
-                }
-            )
+        DeleteRunDropdown(
+            isVisible = showDeleteDropDown,
+            onDismissRequest = { showDeleteDropDown = false },
+            onDeleteClick = onDeleteClick
+        )
+    }
+}
+
+@Composable
+fun DeleteRunDropdown(
+    isVisible: Boolean,
+    onDismissRequest: () -> Unit,
+    onDeleteClick: () -> Unit
+) {
+    val topOffset = with(LocalDensity.current) { 48.dp.toPx() }
+    if (isVisible) {
+        Popup(
+            alignment = Alignment.BottomCenter,
+            offset = IntOffset(0, topOffset.roundToInt()),
+            onDismissRequest = onDismissRequest
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 32.dp)
+                    .padding(top = 2.dp)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.onError)
+                    .clickable {
+                        onDeleteClick()
+                        onDismissRequest()
+                    }
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Delete,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error,
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = stringResource(id = R.string.delete),
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
         }
     }
 }
