@@ -16,7 +16,14 @@ class AnalyticsDashboardViewModel(
 
     init {
         viewModelScope.launch {
-            state = analyticsRepository.getAnalyticsValues().toAnalyticsDashboardState()
+            state = analyticsRepository.getAnalyticsData().toAnalyticsDashboardState()
+        }
+    }
+
+    fun onAction(action: AnalyticsDashboardAction) {
+        when(action) {
+            is AnalyticsDashboardAction.OnMonthChoose -> { }
+            else -> Unit
         }
     }
 }

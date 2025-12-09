@@ -1,5 +1,5 @@
 package com.example.analytics.domain
 
 interface AnalyticsRepository {
-    suspend fun getAnalyticsValues(): AnalyticsValues
+    suspend fun getAnalyticsData(): AnalyticsData
 }

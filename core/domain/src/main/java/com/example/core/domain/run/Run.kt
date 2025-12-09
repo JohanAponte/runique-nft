@@ -17,4 +17,7 @@ data class Run(
 ) {
     val avgSpeedKmh: Double
         get() = (distanceMeters / 1000.0) / duration.toDouble(DurationUnit.HOURS)
+
+    val pace: Double
+        get() = (duration.inWholeSeconds / (distanceMeters / 1000.0))
 }

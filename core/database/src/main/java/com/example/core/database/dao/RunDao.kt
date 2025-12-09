@@ -22,4 +22,7 @@ interface RunDao {
 
     @Query("DELETE FROM runentity")
     suspend fun deleteAllRuns()
+
+    @Query("SELECT * FROM runentity ORDER BY dateTimeUtc ASC")
+    suspend fun getUnsortedRuns(): List<RunEntity>
 }
