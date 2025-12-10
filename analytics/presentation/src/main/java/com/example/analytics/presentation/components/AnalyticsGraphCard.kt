@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -112,20 +113,31 @@ fun AnalyticsGraph(
     Canvas(
         modifier = modifier
             .height(200.dp)
-            .pointerInput(true) {
+            .pointerInput(Unit) {
                 detectTapGestures(
-                    onTap = { offset ->
+                    onPress = { offset ->
                         val x = offset.x
-                        val y = offset.y
-                        val point = pointByDay.entries.find {
-                            val point = it.value
-
-                            point.x - 24f <= x && x <= point.x + 24f
-                        }
-                        point?.let {
-                            val day = it.key
-                            onDayChoose(day)
-                        }
+                        pointByDay.entries
+                            .find {
+                                it.value.x - 24f <= x && x <= it.value.x + 24f
+                            }
+                            ?.also {
+                                onDayChoose(it.key)
+                            }
+                    }
+                )
+            }
+            .pointerInput(Unit) {
+                detectDragGestures(
+                    onDrag = { change, dragAmount ->
+                        val x = change.position.x
+                        pointByDay.entries
+                            .find {
+                                it.value.x - 24f <= x && x <= it.value.x + 24f
+                            }
+                            ?.also {
+                                onDayChoose(it.key)
+                            }
                     }
                 )
             }
@@ -337,6 +349,7 @@ fun MonthChooser(
         }
     }
 }
+
 
 @Preview
 @Composable
