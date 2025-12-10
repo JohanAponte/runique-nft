@@ -1,4 +1,4 @@
-package com.example.run.presentation.run_overview.components
+package com.example.core.presentation.designsystem.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -61,10 +61,10 @@ import com.example.core.presentation.designsystem.LocationIcon
 import com.example.core.presentation.designsystem.RunOutlinedIcon
 import com.example.core.presentation.designsystem.RuniqueTheme
 import com.example.core.presentation.ui.getLocationName
-import com.example.run.presentation.R
-import com.example.run.presentation.run_overview.mapper.toRunUi
-import com.example.run.presentation.run_overview.model.RunDataUi
-import com.example.run.presentation.run_overview.model.RunUi
+import com.example.core.presentation.designsystem.R
+import com.example.core.presentation.ui.mapper.toRunUi
+import com.example.core.presentation.ui.model.RunDataUi
+import com.example.core.presentation.ui.model.RunUi
 import java.time.ZonedDateTime
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -72,7 +72,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun RunListItem(
+fun RunCard(
     run: Run,
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -306,7 +306,7 @@ private fun DataGrid(
 private fun MapImage(imageUrl: String?, modifier: Modifier = Modifier) {
     SubcomposeAsyncImage(
         model = imageUrl,
-        contentDescription = stringResource(R.string.run_amp),
+        contentDescription = stringResource(R.string.run_map),
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(16 / 9f)
@@ -431,9 +431,9 @@ fun LocationNameSection(
 
 @Preview
 @Composable
-private fun RunListItemPreview() {
+private fun RunCardPreview() {
     RuniqueTheme {
-        RunListItem(
+        RunCard(
             run = Run(
                 id = "123",
                 duration = 10.minutes + 30.seconds,

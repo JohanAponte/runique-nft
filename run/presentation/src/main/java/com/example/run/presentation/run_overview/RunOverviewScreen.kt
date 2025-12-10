@@ -34,7 +34,7 @@ import com.example.core.presentation.designsystem.components.RuniqueScaffold
 import com.example.core.presentation.designsystem.components.RuniqueToolbar
 import com.example.core.presentation.designsystem.components.util.DropDownItem
 import com.example.core.presentation.designsystem.components.util.RuniqueMessageSnackBar
-import com.example.run.presentation.run_overview.components.RunListItem
+import com.example.core.presentation.designsystem.components.RunCard
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -129,7 +129,7 @@ private fun RunOverviewScreen(
                     items = state.runs,
                     key = { it.id!! }
                 ) {
-                    RunListItem(
+                    RunCard(
                         run = it,
                         onDeleteClick = {
                             onAction(RunOverviewAction.DeleteRun(it))

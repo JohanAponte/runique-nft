@@ -1,4 +1,4 @@
-package com.example.run.presentation.run_overview.model
+package com.example.core.presentation.ui.model
 
 data class RunDataUi(
     val name: String,
