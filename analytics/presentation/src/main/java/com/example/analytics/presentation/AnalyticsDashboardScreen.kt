@@ -99,8 +99,10 @@ fun AnalyticsDashboardScreen(
     }
 
     LaunchedEffect(key1 = state?.selectedDay) {
-        state?.selectedDay?.let {
-            selectedRun = state.graphData.runByDay[it]
+        selectedRun = if(state?.selectedDay != null) {
+            state.graphData.runByDay[state.selectedDay]
+        } else {
+            null
         }
     }
 
