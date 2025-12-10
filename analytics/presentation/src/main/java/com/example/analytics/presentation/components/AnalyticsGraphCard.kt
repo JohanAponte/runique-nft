@@ -1,5 +1,6 @@
 package com.example.analytics.presentation.components
 
+import android.R.attr.x
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -42,6 +43,7 @@ import com.example.core.domain.location.Location
 import com.example.core.domain.run.Run
 import com.example.core.presentation.designsystem.KeyboardArrowDownIcon
 import com.example.core.presentation.designsystem.RuniqueTheme
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -54,6 +56,7 @@ fun AnalyticsGraphCard(
 ) {
     Column(
         modifier = modifier
+            .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
             .padding(16.dp),
@@ -64,6 +67,7 @@ fun AnalyticsGraphCard(
             graphData = graphData,
             modifier = Modifier.fillMaxWidth()
         )
+        Spacer(modifier = Modifier.height(12.dp))
         if (graphData.runs.isNotEmpty()) {
             MonthChooser(
                 months = graphData.distinctMonths,
@@ -79,7 +83,6 @@ fun AnalyticsGraph(
     graphData: AnalyticsGraphData,
     modifier: Modifier = Modifier
 ) {
-
     val textMeasurer = rememberTextMeasurer()
 
     val axisTextStyle = TextStyle(
@@ -93,28 +96,40 @@ fun AnalyticsGraph(
         phase = 0f
     )
 
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val whiteColor = MaterialTheme.colorScheme.onSurface
+
     Canvas(
         modifier = modifier.height(200.dp)
     ) {
+        val dayRange = (graphData.lastDay - graphData.firstDay).toFloat()
 
-        val xAxisSpace = size.width / (graphData.runByDay.size + 1)
+        val graphHeight = size.height - 16.dp.toPx()
+        val graphWidth = size.width - 48.dp.toPx()
 
-        graphData.runByDay.keys.toList().forEachIndexed { index, day ->
+        graphData.days.forEachIndexed { index, day ->
+            val doubleDigitMargin = if (day >= 10) 6.sp.toPx() else 0f
+            val x = if (graphData.days.size > 1) {
+                graphWidth - ((graphData.lastDay - day) / dayRange * graphWidth) + 22.dp.toPx() - doubleDigitMargin
+            } else {
+                size.width / 2 - doubleDigitMargin
+            }
+
             drawText(
                 textMeasurer = textMeasurer,
                 text = day.toString(),
                 style = axisTextStyle,
                 topLeft = Offset(
-                    x = (index + 1) * xAxisSpace,
+                    x = x,
                     y = size.height - 12.sp.toPx()
-                )
+                ),
             )
         }
 
         (0..4).forEach {
             drawLine(
                 start = Offset(x = size.width / 4 * it, y = 0f),
-                end = Offset(x = size.width / 4 * it, y = size.height - 16.sp.toPx()),
+                end = Offset(x = size.width / 4 * it, y = graphHeight),
                 color = backgroundLinesColor,
                 strokeWidth = 2f,
                 pathEffect = dashedPathEffect
@@ -122,11 +137,37 @@ fun AnalyticsGraph(
         }
 
         drawLine(
-            start = Offset(x = 0f, y = size.height - 16.sp.toPx()),
-            end = Offset(x = size.width, y = size.height - 16.sp.toPx()),
+            start = Offset(x = 0f, y = graphHeight),
+            end = Offset(x = size.width, y = graphHeight),
             color = backgroundLinesColor,
             strokeWidth = 2f
         )
+
+        graphData.valueByDay.forEach { (day, value) ->
+            val x = if (graphData.days.size > 1) {
+                graphWidth - ((graphData.lastDay - day) / dayRange * graphWidth) + 24.dp.toPx()
+            } else {
+                size.width / 2
+            }
+
+            val valueDifference = graphData.maxValue.toFloat() - value.toFloat()
+            val y = if (graphData.days.size > 1) {
+                valueDifference / graphData.valuesRange * graphHeight * 0.8f + size.height * 0.1f
+            } else {
+                graphHeight / 2
+            }
+
+            drawCircle(
+                color = whiteColor,
+                radius = 14f,
+                center = Offset(x, y)
+            )
+            drawCircle(
+                color = primaryColor,
+                radius = 10f,
+                center = Offset(x, y)
+            )
+        }
     }
 }
 
@@ -197,6 +238,94 @@ private fun AnalyticsGraphCardPreview() {
                         duration = 10.minutes + 30.seconds,
                         dateTimeUtc = ZonedDateTime.now(),
                         distanceMeters = 5500,
+                        location = Location(0.0, 0.0),
+                        maxSpeedKmh = 15.0,
+                        totalElevationMeters = 123,
+                        mapPictureUrl = null
+                    )
+                )
+            ),
+            onMonthChoose = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun AnalyticsGraphCardPreviewWithTwoRuns() {
+    RuniqueTheme {
+        AnalyticsGraphCard(
+            graphData = AnalyticsGraphData(
+                runs = listOf(
+                    Run(
+                        id = "123",
+                        duration = 10.minutes + 30.seconds,
+                        dateTimeUtc = ZonedDateTime.of(
+                            2021, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")
+                        ),
+                        distanceMeters = 5500,
+                        location = Location(0.0, 0.0),
+                        maxSpeedKmh = 15.0,
+                        totalElevationMeters = 123,
+                        mapPictureUrl = null
+                    ),
+                    Run(
+                        id = "123",
+                        duration = 10.minutes + 30.seconds,
+                        dateTimeUtc = ZonedDateTime.of(
+                            2021, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC")
+                        ),
+                        distanceMeters = 4500,
+                        location = Location(0.0, 0.0),
+                        maxSpeedKmh = 15.0,
+                        totalElevationMeters = 123,
+                        mapPictureUrl = null
+                    )
+                )
+            ),
+            onMonthChoose = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun AnalyticsGraphCardPreviewWithThreeRuns() {
+    RuniqueTheme {
+        AnalyticsGraphCard(
+            graphData = AnalyticsGraphData(
+                runs = listOf(
+                    Run(
+                        id = "123",
+                        duration = 10.minutes + 30.seconds,
+                        dateTimeUtc = ZonedDateTime.of(
+                            2021, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")
+                        ),
+                        distanceMeters = 5500,
+                        location = Location(0.0, 0.0),
+                        maxSpeedKmh = 15.0,
+                        totalElevationMeters = 123,
+                        mapPictureUrl = null
+                    ),
+                    Run(
+                        id = "123",
+                        duration = 10.minutes + 30.seconds,
+                        dateTimeUtc = ZonedDateTime.of(
+                            2021, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC")
+                        ),
+                        distanceMeters = 4500,
+                        location = Location(0.0, 0.0),
+                        maxSpeedKmh = 15.0,
+                        totalElevationMeters = 123,
+                        mapPictureUrl = null
+                    ),
+                    Run(
+                        id = "123",
+                        duration = 10.minutes + 30.seconds,
+                        dateTimeUtc = ZonedDateTime.of(
+                            2021, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC")
+                        ),
+                        distanceMeters = 6500,
                         location = Location(0.0, 0.0),
                         maxSpeedKmh = 15.0,
                         totalElevationMeters = 123,
