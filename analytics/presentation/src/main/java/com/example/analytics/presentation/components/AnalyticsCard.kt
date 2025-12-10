@@ -22,7 +22,7 @@ fun AnalyticsCard(
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(15.dp))
-            .background(MaterialTheme.colorScheme.surface)
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
             .padding(16.dp),
         verticalArrangement = Arrangement.Center
     ){

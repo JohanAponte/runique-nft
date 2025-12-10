@@ -114,7 +114,7 @@ fun RunCard(
         Column(
             modifier = modifier
                 .clip(RoundedCornerShape(15.dp))
-                .background(MaterialTheme.colorScheme.surface)
+                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
                 .pointerInput(UInt){
                     detectTapGestures(
                         onLongPress = {

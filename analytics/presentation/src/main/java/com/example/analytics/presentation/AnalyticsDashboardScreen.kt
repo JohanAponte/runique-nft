@@ -141,7 +141,6 @@ fun AnalyticsDashboardScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
                         ) {
                             AnalyticsCard(
                                 title = stringResource(id = R.string.total_distance),
@@ -160,7 +159,6 @@ fun AnalyticsDashboardScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
                         ) {
                             AnalyticsCard(
                                 title = stringResource(id = R.string.fastes_ever_run),
@@ -207,7 +205,6 @@ fun AnalyticsDashboardScreen(
                                 selectedRun?.let {
                                     RunCard(
                                         run = it,
-                                        modifier = Modifier.padding(16.dp)
                                     )
                                 }
                             }
