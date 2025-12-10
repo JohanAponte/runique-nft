@@ -1,22 +1,18 @@
 package com.example.analytics.presentation
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarDefaults
@@ -30,7 +26,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,6 +38,7 @@ import com.example.analytics.presentation.components.AnalyticsGraphCard
 import com.example.core.domain.location.Location
 import com.example.core.domain.run.Run
 import com.example.core.presentation.designsystem.RuniqueTheme
+import com.example.core.presentation.designsystem.components.GradientBackground
 import com.example.core.presentation.designsystem.components.RunCard
 import com.example.core.presentation.designsystem.components.RuniqueScaffold
 import com.example.core.presentation.designsystem.components.RuniqueToolbar
@@ -69,17 +68,19 @@ fun AnalyticsDashboardScreenRoot(
 @Composable
 fun AnalyticsDashboardScreen(
     state: AnalyticsDashboardState?,
-    onAction: (AnalyticsDashboardAction) -> Unit
+    onAction: (AnalyticsDashboardAction) -> Unit,
 ) {
-
     val topAppBarState = rememberTopAppBarState()
-
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
         state = topAppBarState
     )
 
     var selectedRun by remember {
         mutableStateOf<Run?>(null)
+    }
+
+    var isRunExpanded by remember {
+        mutableStateOf(false)
     }
 
     var previousSelectedDay by remember {
@@ -100,117 +101,119 @@ fun AnalyticsDashboardScreen(
     LaunchedEffect(key1 = state?.selectedDay) {
         state?.selectedDay?.let {
             selectedRun = state.graphData.runByDay[it]
-            Log.d("AnalyticsDashboardScreen", "selectedDay: $selectedRun")
         }
     }
 
-    RuniqueScaffold(
-        topAppBar = {
-            RuniqueToolbar(
-                showBackButton = true,
-                title = stringResource(R.string.analytics),
-                scrollBehavior = scrollBehavior,
-                onBackClick = {
-                    onAction(AnalyticsDashboardAction.OnBackClick)
-                }
-            )
-        }
-    ) { padding ->
-        if (state == null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-            ) {
-                CircularProgressIndicator()
-            }
-        } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(padding),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                ) {
-                    AnalyticsCard(
-                        title = stringResource(id = R.string.total_distance),
-                        value = state.totalDistance,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    AnalyticsCard(
-                        title = stringResource(id = R.string.total_time_run),
-                        value = state.totalDuration,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                ) {
-                    AnalyticsCard(
-                        title = stringResource(id = R.string.fastes_ever_run),
-                        value = state.maxSpeed,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                AnalyticsGraphCard(
-                    graphData = state.graphData,
-                    selectedDay = state.selectedDay,
-                    onMonthSelect = { month ->
-                        onAction(AnalyticsDashboardAction.OnMonthSelect(month))
-                    },
-                    onDaySelect = { day ->
-                        dayChangeDifference = (state.selectedDay ?: 0) - (day)
-                        onAction(AnalyticsDashboardAction.OnDaySelect(day))
-                    },
-                    onTypeSelect = { type ->
-                        onAction(AnalyticsDashboardAction.OnGraphTypeSelect(type))
-                    },
-                    modifier = Modifier.padding(horizontal = 16.dp)
+    GradientBackground {
+        RuniqueScaffold(
+            topAppBar = {
+                RuniqueToolbar(
+                    title = stringResource(id = R.string.analytics),
+                    scrollBehavior = scrollBehavior,
+                    showBackButton = true,
+                    onBackClick = { onAction(AnalyticsDashboardAction.OnBackClick) }
                 )
-                //Spacer(modifier = Modifier.height(16.dp))
-
-                AnimatedContent(
-                    targetState = selectedRun,
-                    transitionSpec = {
-                        slideInHorizontally(
-                            initialOffsetX = {
-                                if (dayChangeDifference > 0) it else -it
-                            }
-                        ).togetherWith(
-                            slideOutHorizontally(
-                                targetOffsetX = {
-                                    if (dayChangeDifference > 0) -it else it
-                                }
+            },
+        ) { padding ->
+            if (state == null) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .nestedScroll(scrollBehavior.nestedScrollConnection)
+                        .padding(padding)
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                        ) {
+                            AnalyticsCard(
+                                title = stringResource(id = R.string.total_distance),
+                                value = state.totalDistance,
+                                modifier = Modifier.weight(1f)
                             )
-                        )
-                    },
-                    label = ""
-                ) { selectedRun ->
-                    key(selectedRun?.id) {
-                        selectedRun?.let {
-                            RunCard(
-                                run = it,
-                                modifier = Modifier.padding(16.dp)
+                            Spacer(modifier = Modifier.width(16.dp))
+                            AnalyticsCard(
+                                title = stringResource(id = R.string.total_time_run),
+                                value = state.totalDuration,
+                                modifier = Modifier.weight(1f)
                             )
                         }
                     }
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                        ) {
+                            AnalyticsCard(
+                                title = stringResource(id = R.string.fastes_ever_run),
+                                value = state.maxSpeed,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                    item {
+                        AnalyticsGraphCard(
+                            graphData = state.graphData,
+                            selectedDay = state.selectedDay,
+                            onTypeSelect = { type ->
+                                onAction(AnalyticsDashboardAction.OnGraphTypeSelect(type))
+                            },
+                            onDaySelect = { day ->
+                                dayChangeDifference = (state.selectedDay ?: 0) - (day)
+                                onAction(AnalyticsDashboardAction.OnDaySelect(day))
+                            },
+                            onMonthSelect = { month ->
+                                onAction(AnalyticsDashboardAction.OnMonthSelect(month))
+                            }
+                        )
+                    }
+                    item {
+                        AnimatedContent(
+                            targetState = selectedRun,
+                            transitionSpec = {
+                                slideInHorizontally(
+                                    initialOffsetX = {
+                                        if (dayChangeDifference > 0) it else -it
+                                    }
+                                ).togetherWith(
+                                    slideOutHorizontally(
+                                        targetOffsetX = {
+                                            if (dayChangeDifference > 0) -it else it
+                                        }
+                                    )
+                                )
+                            },
+                            label = ""
+                        ) { selectedRun ->
+                            key(selectedRun?.id) {
+                                selectedRun?.let {
+                                    RunCard(
+                                        run = it,
+                                        modifier = Modifier.padding(16.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
             }
         }
-
     }
 }
 
