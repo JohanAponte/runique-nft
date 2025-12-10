@@ -9,4 +9,13 @@
     <string name="logout">Logout</string>
     <string name="active_run">Active run</string>
     <string name="youre_logged_in">You\'re logged in!</string>
+    <string name="total_running_time">Total runing time</string>
+    <string name="max_speed">Max speed</string>
+    <string name="avg_speed">ø Speed</string>
+    <string name="totel_elevation">Total elevation</string>
+    <string name="delete">Delete</string>
+    <string name="distance">Distance</string>
+    <string name="pace">Pace</string>
+    <string name="couldnt_load_image">Couldn\'t load image.</string>
+    <string name="run_map">Run map</string>
 </resources>
