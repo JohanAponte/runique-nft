@@ -33,6 +33,18 @@ fun Duration.toFormattedPace(distanceKm: Double): String {
     return "$avgPaceMinutes:$avgPaceSeconds / km"
 }
 
+fun Duration.toFormattedPace(): String {
+    if (this == Duration.ZERO) {
+        return "-"
+    }
+
+    val totalSeconds = inWholeSeconds
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+
+    return "${minutes}:${String.format("%02d", seconds)} / km"
+}
+
 fun Double.toFormattedKmh(): String {
     return "${roundToDecimals(1)} km/h"
 }

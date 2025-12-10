@@ -166,11 +166,11 @@ fun AnalyticsDashboardScreen(
 
                 AnalyticsGraphCard(
                     graphData = state.graphData,
-                    chosenDay = state.selectedDay,
+                    selectedDay = state.selectedDay,
                     onMonthSelect = { month ->
                         onAction(AnalyticsDashboardAction.OnMonthSelect(month))
                     },
-                    onDayChoose = { day ->
+                    onDaySelect = { day ->
                         dayChangeDifference = (state.selectedDay ?: 0) - (day)
                         onAction(AnalyticsDashboardAction.OnDaySelect(day))
                     },
