@@ -2,11 +2,9 @@ package com.example.analytics.presentation
 
 import android.annotation.SuppressLint
 import com.example.analytics.domain.AnalyticsData
-import com.example.core.presentation.ui.formatted
 import com.example.core.presentation.ui.toFormattedKm
 import com.example.core.presentation.ui.toFormattedKmh
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 
 @SuppressLint("DefaultLocale")
@@ -23,8 +21,6 @@ fun AnalyticsData.toAnalyticsDashboardState(): AnalyticsDashboardState {
         totalDistance = (totalDistanceRun / 1000.0).toFormattedKm(),
         totalDuration = totalTimeRun.toFormattedTotalTime(),
         maxSpeed = fastestEverRun.toFormattedKmh(),
-        avgDistance = (avgDistancePerRun / 1000.0).toFormattedKm(),
-        avgPace = avgPacePerRun.seconds.formatted(),
         graphData = graphData
     )
 }
