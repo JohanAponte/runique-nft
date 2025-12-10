@@ -110,6 +110,9 @@ fun AnalyticsDashboardScreen(
                     onMonthChoose = { month ->
                         onAction(AnalyticsDashboardAction.OnMonthChoose(month))
                     },
+                    onDayChoose = { day ->
+                        onAction(AnalyticsDashboardAction.OnDayChoose(day))
+                    },
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }

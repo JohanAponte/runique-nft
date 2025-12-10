@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -57,7 +59,9 @@ import kotlin.time.Duration.Companion.seconds
 fun AnalyticsGraphCard(
     graphData: AnalyticsGraphData,
     onMonthChoose: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    chosenDay: Int? = null,
+    onDayChoose: (Int) -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -70,7 +74,9 @@ fun AnalyticsGraphCard(
     ) {
         AnalyticsGraph(
             graphData = graphData,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            onDayChoose = onDayChoose,
+            chosenDay = chosenDay
         )
         Spacer(modifier = Modifier.height(12.dp))
         if (graphData.runs.isNotEmpty()) {
@@ -86,8 +92,12 @@ fun AnalyticsGraphCard(
 @Composable
 fun AnalyticsGraph(
     graphData: AnalyticsGraphData,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    chosenDay: Int? = null,
+    onDayChoose: (Int) -> Unit = {},
 ) {
+    val pointByDay: MutableMap<Int, PointF> = mutableMapOf()
+
     val textMeasurer = rememberTextMeasurer()
 
     val axisTextStyle = TextStyle(
@@ -96,16 +106,30 @@ fun AnalyticsGraph(
     )
 
     val backgroundLinesColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-    val dashedPathEffect = PathEffect.dashPathEffect(
-        intervals = floatArrayOf(10f, 10f),
-        phase = 0f
-    )
-
-    val dotAndGraphColor = MaterialTheme.colorScheme.primary
-    val dotStrokeColor = MaterialTheme.colorScheme.onSurface
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val whiteColor = MaterialTheme.colorScheme.onSurface
 
     Canvas(
-        modifier = modifier.height(200.dp)
+        modifier = modifier
+            .height(200.dp)
+            .pointerInput(true) {
+                detectTapGestures(
+                    onTap = { offset ->
+                        val x = offset.x
+                        val y = offset.y
+                        val point = pointByDay.entries.find {
+                            val point = it.value
+
+                            point.x - 24f <= x && x <= point.x + 24f &&
+                                    point.y - 24f <= y && y <= point.y + 24f
+                        }
+                        point?.let {
+                            val day = it.key
+                            onDayChoose(day)
+                        }
+                    }
+                )
+            }
     ) {
 
         val graphHeight = size.height - 16.dp.toPx()
@@ -136,7 +160,10 @@ fun AnalyticsGraph(
                 end = Offset(x = size.width / 4 * it, y = graphHeight),
                 color = backgroundLinesColor,
                 strokeWidth = 2f,
-                pathEffect = dashedPathEffect
+                pathEffect = PathEffect.dashPathEffect(
+                    intervals = floatArrayOf(10f, 10f),
+                    phase = 0f
+                )
             )
         }
 
@@ -146,8 +173,6 @@ fun AnalyticsGraph(
             color = backgroundLinesColor,
             strokeWidth = 2f
         )
-
-        val points: MutableList<PointF> = mutableListOf()
 
         graphData.valueByDay.forEach { (day, value) ->
             val x = if (graphData.days.size > 1) {
@@ -163,11 +188,12 @@ fun AnalyticsGraph(
                 graphHeight / 2
             }
 
-            points += PointF(x, y)
+            pointByDay[day] = PointF(x, y)
         }
 
+        val points = pointByDay.values.toList()
         val controlPoints: MutableList<Pair<PointF, PointF>> = mutableListOf()
-        for (i in 1 until points.size) {
+        for (i in 1 until pointByDay.size) {
             controlPoints +=
                 Pair(
                     PointF(
@@ -196,26 +222,12 @@ fun AnalyticsGraph(
 
         drawPath(
             path = graphPath,
-            color = dotAndGraphColor,
+            color = primaryColor,
             style = Stroke(
                 width = 5f,
                 cap = StrokeCap.Round,
             ),
         )
-
-        points.forEach { point ->
-            drawCircle(
-                color = dotStrokeColor,
-                radius = 14f,
-                center = Offset(point.x, point.y)
-            )
-
-            drawCircle(
-                color = dotAndGraphColor,
-                radius = 10f,
-                center = Offset(point.x, point.y)
-            )
-        }
 
         val fillPath = graphPath.apply {
             lineTo(points.last().x, graphHeight)
@@ -227,12 +239,47 @@ fun AnalyticsGraph(
             path = fillPath,
             brush = Brush.verticalGradient(
                 listOf(
-                    dotAndGraphColor.copy(alpha = 0.5f),
+                    primaryColor.copy(alpha = 0.5f),
                     Color.Transparent
                 ),
                 endY = graphHeight
             )
         )
+
+        chosenDay?.let { day ->
+            val point = pointByDay[day]
+            point?.let {
+                drawLine(
+                    start = Offset(x = it.x, y = it.y),
+                    end = Offset(x = it.x, y = graphHeight),
+                    color = whiteColor,
+                    strokeWidth = 4f,
+                    pathEffect = PathEffect.dashPathEffect(
+                        intervals = floatArrayOf(15f, 10f),
+                        phase = 0f
+                    )
+                )
+            }
+        }
+
+        pointByDay.forEach { (day, point) ->
+            val (smallRadius, bigRadius) = if (day == chosenDay) {
+                10f to 16f
+            } else {
+                10f to 14f
+            }
+            drawCircle(
+                color = whiteColor,
+                radius = bigRadius,
+                center = Offset(point.x, point.y)
+            )
+
+            drawCircle(
+                color = primaryColor,
+                radius = smallRadius,
+                center = Offset(point.x, point.y)
+            )
+        }
 
     }
 }
@@ -312,6 +359,7 @@ private fun AnalyticsGraphCardPreview() {
                 )
             ),
             onMonthChoose = {},
+            onDayChoose = {}
         )
     }
 }
@@ -350,6 +398,7 @@ private fun AnalyticsGraphCardPreviewWithTwoRuns() {
                 )
             ),
             onMonthChoose = {},
+            onDayChoose = {}
         )
     }
 }
@@ -399,7 +448,9 @@ private fun AnalyticsGraphCardPreviewWithThreeRuns() {
                     )
                 )
             ),
+            chosenDay = 1,
             onMonthChoose = {},
+            onDayChoose = {}
         )
     }
 }

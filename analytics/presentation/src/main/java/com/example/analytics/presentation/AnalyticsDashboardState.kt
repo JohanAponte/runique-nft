@@ -8,5 +8,6 @@ data class AnalyticsDashboardState(
     val maxSpeed: String,
     val avgDistance: String,
     val avgPace: String,
-    val graphData: AnalyticsGraphData = AnalyticsGraphData()
+    val graphData: AnalyticsGraphData = AnalyticsGraphData(),
+    val selectedDay: Int? = null,
 )
