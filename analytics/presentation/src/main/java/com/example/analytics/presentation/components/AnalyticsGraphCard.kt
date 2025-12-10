@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -47,6 +49,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.analytics.domain.AnalyticsGraphData
+import com.example.analytics.domain.AnalyticsGraphType
 import com.example.core.domain.location.Location
 import com.example.core.domain.run.Run
 import com.example.core.presentation.designsystem.KeyboardArrowDownIcon
@@ -59,8 +62,9 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun AnalyticsGraphCard(
     graphData: AnalyticsGraphData,
-    onMonthChoose: (String) -> Unit,
+    onMonthSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
+    onTypeSelect: (AnalyticsGraphType) -> Unit,
     chosenDay: Int? = null,
     onDayChoose: (Int) -> Unit = {},
 ) {
@@ -69,10 +73,16 @@ fun AnalyticsGraphCard(
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
-            .padding(16.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        GraphTypeSelect(
+            modifier = Modifier.fillMaxWidth(),
+            selectedType = graphData.dataType,
+            onTypeSelect = onTypeSelect
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         AnalyticsGraph(
             graphData = graphData,
             modifier = Modifier.fillMaxWidth(),
@@ -81,10 +91,37 @@ fun AnalyticsGraphCard(
         )
         Spacer(modifier = Modifier.height(12.dp))
         if (graphData.runs.isNotEmpty()) {
-            MonthChooser(
+            MonthSelector(
                 months = graphData.distinctMonths,
                 selectedMonth = graphData.selectedMonth!!,
-                onMonthChoose = onMonthChoose
+                onMonthSelect = onMonthSelect
+            )
+        }
+    }
+}
+
+@Composable
+fun GraphTypeSelect(
+    modifier: Modifier = Modifier,
+    selectedType: AnalyticsGraphType,
+    onTypeSelect: (AnalyticsGraphType) -> Unit
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        AnalyticsGraphType.entries.forEach { type ->
+            FilterChip(
+                selected = selectedType == type,
+                onClick = {
+                    onTypeSelect(type)
+                },
+                label = {
+                    Text(text = type.title)
+                },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                )
             )
         }
     }
@@ -296,10 +333,10 @@ fun AnalyticsGraph(
 }
 
 @Composable
-fun MonthChooser(
+fun MonthSelector(
     months: List<String>,
     selectedMonth: String,
-    onMonthChoose: (String) -> Unit,
+    onMonthSelect: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var expandMonths by remember {
@@ -343,7 +380,7 @@ fun MonthChooser(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     },
-                    onClick = { onMonthChoose(month) }
+                    onClick = { onMonthSelect(month) }
                 )
             }
         }
@@ -370,8 +407,9 @@ private fun AnalyticsGraphCardPreview() {
                     )
                 )
             ),
-            onMonthChoose = {},
-            onDayChoose = {}
+            onMonthSelect = {},
+            onDayChoose = {},
+            onTypeSelect = {}
         )
     }
 }
@@ -409,8 +447,9 @@ private fun AnalyticsGraphCardPreviewWithTwoRuns() {
                     )
                 )
             ),
-            onMonthChoose = {},
-            onDayChoose = {}
+            onMonthSelect = {},
+            onDayChoose = {},
+            onTypeSelect = {}
         )
     }
 }
@@ -461,8 +500,9 @@ private fun AnalyticsGraphCardPreviewWithThreeRuns() {
                 )
             ),
             chosenDay = 2,
-            onMonthChoose = {},
-            onDayChoose = {}
+            onMonthSelect = {},
+            onDayChoose = {},
+            onTypeSelect = {}
         )
     }
 }

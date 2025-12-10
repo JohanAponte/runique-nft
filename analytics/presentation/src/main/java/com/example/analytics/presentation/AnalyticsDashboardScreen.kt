@@ -166,12 +166,16 @@ fun AnalyticsDashboardScreen(
 
                 AnalyticsGraphCard(
                     graphData = state.graphData,
-                    onMonthChoose = { month ->
-                        onAction(AnalyticsDashboardAction.OnMonthChoose(month))
+                    chosenDay = state.selectedDay,
+                    onMonthSelect = { month ->
+                        onAction(AnalyticsDashboardAction.OnMonthSelect(month))
                     },
                     onDayChoose = { day ->
                         dayChangeDifference = (state.selectedDay ?: 0) - (day)
-                        onAction(AnalyticsDashboardAction.OnDayChoose(day))
+                        onAction(AnalyticsDashboardAction.OnDaySelect(day))
+                    },
+                    onTypeSelect = { type ->
+                        onAction(AnalyticsDashboardAction.OnGraphTypeSelect(type))
                     },
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
