@@ -1,12 +1,10 @@
 package com.example.analytics.presentation
 
 import android.annotation.SuppressLint
-import com.example.analytics.domain.AnalyticsValues
-import com.example.core.presentation.ui.formatted
+import com.example.analytics.domain.AnalyticsData
 import com.example.core.presentation.ui.toFormattedKm
 import com.example.core.presentation.ui.toFormattedKmh
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 
 @SuppressLint("DefaultLocale")
@@ -18,12 +16,11 @@ fun Duration.toFormattedTotalTime(): String {
     return "${days}d ${hours}h ${minutes}m"
 }
 
-fun AnalyticsValues.toAnalyticsDashboardState(): AnalyticsDashboardState {
+fun AnalyticsData.toAnalyticsDashboardState(): AnalyticsDashboardState {
     return AnalyticsDashboardState(
-        totalDistanceRun = (totalDistanceRun / 1000.0).toFormattedKm(),
-        totalTimeRun = totalTimeRun.toFormattedTotalTime(),
-        fastestEverRun = fastestEverRun.toFormattedKmh(),
-        avgDistance = (avgDistancePerRun / 1000.0).toFormattedKm(),
-        avgPace = avgPacePerRun.seconds.formatted(),
+        totalDistance = (totalDistanceRun / 1000.0).toFormattedKm(),
+        totalDuration = totalTimeRun.toFormattedTotalTime(),
+        maxSpeed = fastestEverRun.toFormattedKmh(),
+        graphData = graphData
     )
 }

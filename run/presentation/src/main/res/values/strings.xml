@@ -6,7 +6,7 @@
     <string name="duration">Duration</string>
     <string name="distance">Distance</string>
     <string name="pace">Pace</string>
-    <string name="permission_required">Permisson required</string>
+    <string name="permission_required">Permission required</string>
     <string name="location_notification_permission_rationale">In order to track your location and display the current time as a notification, this app needs your permission for that. Please click on \"Okay\" to grant it.</string>
     <string name="notification_rationale">In order to display the current time as a notification, this app needs your permission for that. Please click on \"Okay\" to grant it.</string>
     <string name="location_rationale">In order to track your location, this app needs your permission for that. Please click on \"Okay\" to grant it.</string>
@@ -15,12 +15,5 @@
     <string name="resume_or_finished_run">Do you want to resume or finish the workout?</string>
     <string name="resume">Resume</string>
     <string name="finish">Finish</string>
-    <string name="run_amp">Run map</string>
-    <string name="couldnt_load_image">Couldn\'t load image.</string>
-    <string name="total_running_time">Total runing time</string>
-    <string name="max_speed">Max speed</string>
-    <string name="avg_speed">ø Speed</string>
-    <string name="totel_elevation">Total elevation</string>
-    <string name="delete">Delete</string>
     <string name="youre_logged_in">You\'re logged in!</string>
 </resources>

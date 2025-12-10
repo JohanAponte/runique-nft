@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="analytics">Analytics</string>
-    <string name="total_distance">Total distance run</string>
-    <string name="total_time_run">Total time run</string>
-    <string name="fastes_ever_run">Fastes ever run</string>
+    <string name="total_distance">Total distance</string>
+    <string name="total_time_run">Total time</string>
+    <string name="fastes_ever_run">Max speed</string>
     <string name="avg_distance_per_run">Avg. distance per run</string>
     <string name="avg_pace_per_run">Avg. pace per run</string>
 </resources>

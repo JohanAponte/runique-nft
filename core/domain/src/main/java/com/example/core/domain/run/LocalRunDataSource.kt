@@ -12,4 +12,5 @@ interface LocalRunDataSource {
     suspend fun upsertRuns(runs: List<Run>): Result<List<RunId>, DataError.Local>
     suspend fun deleteRun(id: String)
     suspend fun deleteAllRuns()
+    suspend fun getUnsortedRuns(): List<Run>
 }

@@ -7,6 +7,9 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.presentation.ui)
+    implementation(projects.core.domain)
+    implementation(libs.coil.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.ui)

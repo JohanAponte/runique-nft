@@ -51,4 +51,8 @@ class RoomLocalRunDataSource(
     override suspend fun deleteAllRuns() {
         runDao.deleteAllRuns()
     }
+
+    override suspend fun getUnsortedRuns(): List<Run> {
+        return runDao.getUnsortedRuns().map { it.toRun() }
+    }
 }

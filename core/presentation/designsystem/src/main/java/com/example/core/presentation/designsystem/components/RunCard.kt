@@ -1,4 +1,4 @@
-package com.example.run.presentation.run_overview.components
+package com.example.core.presentation.designsystem.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -8,7 +8,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -58,13 +59,13 @@ import com.example.core.domain.location.Location
 import com.example.core.domain.run.Run
 import com.example.core.presentation.designsystem.CalendarIcon
 import com.example.core.presentation.designsystem.LocationIcon
+import com.example.core.presentation.designsystem.R
 import com.example.core.presentation.designsystem.RunOutlinedIcon
 import com.example.core.presentation.designsystem.RuniqueTheme
 import com.example.core.presentation.ui.getLocationName
-import com.example.run.presentation.R
-import com.example.run.presentation.run_overview.mapper.toRunUi
-import com.example.run.presentation.run_overview.model.RunDataUi
-import com.example.run.presentation.run_overview.model.RunUi
+import com.example.core.presentation.ui.mapper.toRunUi
+import com.example.core.presentation.ui.model.RunDataUi
+import com.example.core.presentation.ui.model.RunUi
 import java.time.ZonedDateTime
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -72,10 +73,10 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun RunListItem(
+fun RunCard(
     run: Run,
-    onDeleteClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onDeleteClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
 
@@ -113,13 +114,23 @@ fun RunListItem(
         Column(
             modifier = modifier
                 .clip(RoundedCornerShape(15.dp))
-                .background(MaterialTheme.colorScheme.surface)
-                .combinedClickable(
+                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
+                .pointerInput(UInt){
+                    detectTapGestures(
+                        onLongPress = {
+                            showDeleteDropDown = true
+                        },
+                        onTap = {
+                            isExpanded = !isExpanded
+                        }
+                    )
+                }
+                /*.combinedClickable(
                     onClick = {},
                     onLongClick = {
                         showDeleteDropDown = true
                     }
-                )
+                )*/
                 .padding(16.dp),
         ) {
             MapImage(imageUrl = runUi.mapPictureUrl)
@@ -306,7 +317,7 @@ private fun DataGrid(
 private fun MapImage(imageUrl: String?, modifier: Modifier = Modifier) {
     SubcomposeAsyncImage(
         model = imageUrl,
-        contentDescription = stringResource(R.string.run_amp),
+        contentDescription = stringResource(R.string.run_map),
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(16 / 9f)
@@ -431,9 +442,9 @@ fun LocationNameSection(
 
 @Preview
 @Composable
-private fun RunListItemPreview() {
+private fun RunCardPreview() {
     RuniqueTheme {
-        RunListItem(
+        RunCard(
             run = Run(
                 id = "123",
                 duration = 10.minutes + 30.seconds,
