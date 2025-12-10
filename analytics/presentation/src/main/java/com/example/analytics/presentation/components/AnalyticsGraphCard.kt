@@ -1,6 +1,6 @@
 package com.example.analytics.presentation.components
 
-import android.R.attr.x
+import android.graphics.PointF
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -31,7 +31,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -96,13 +101,12 @@ fun AnalyticsGraph(
         phase = 0f
     )
 
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val whiteColor = MaterialTheme.colorScheme.onSurface
+    val dotAndGraphColor = MaterialTheme.colorScheme.primary
+    val dotStrokeColor = MaterialTheme.colorScheme.onSurface
 
     Canvas(
         modifier = modifier.height(200.dp)
     ) {
-        val dayRange = (graphData.lastDay - graphData.firstDay).toFloat()
 
         val graphHeight = size.height - 16.dp.toPx()
         val graphWidth = size.width - 48.dp.toPx()
@@ -110,7 +114,7 @@ fun AnalyticsGraph(
         graphData.days.forEachIndexed { index, day ->
             val doubleDigitMargin = if (day >= 10) 6.sp.toPx() else 0f
             val x = if (graphData.days.size > 1) {
-                graphWidth - ((graphData.lastDay - day) / dayRange * graphWidth) + 22.dp.toPx() - doubleDigitMargin
+                graphWidth - ((graphData.lastDay - day) / graphData.daysRange * graphWidth) + 22.dp.toPx() - doubleDigitMargin
             } else {
                 size.width / 2 - doubleDigitMargin
             }
@@ -143,9 +147,11 @@ fun AnalyticsGraph(
             strokeWidth = 2f
         )
 
+        val points: MutableList<PointF> = mutableListOf()
+
         graphData.valueByDay.forEach { (day, value) ->
             val x = if (graphData.days.size > 1) {
-                graphWidth - ((graphData.lastDay - day) / dayRange * graphWidth) + 24.dp.toPx()
+                graphWidth - ((graphData.lastDay - day) / graphData.daysRange * graphWidth) + 24.dp.toPx()
             } else {
                 size.width / 2
             }
@@ -157,17 +163,77 @@ fun AnalyticsGraph(
                 graphHeight / 2
             }
 
+            points += PointF(x, y)
+        }
+
+        val controlPoints: MutableList<Pair<PointF, PointF>> = mutableListOf()
+        for (i in 1 until points.size) {
+            controlPoints +=
+                Pair(
+                    PointF(
+                        (points[i - 1].x + points[i].x) / 2,
+                        points[i - 1].y
+                    ),
+                    PointF(
+                        (points[i - 1].x + points[i].x) / 2,
+                        points[i].y
+                    ),
+                )
+        }
+
+        val graphPath = Path().apply {
+            reset()
+            moveTo(points.first().x, points.first().y)
+            for (i in 0 until points.size - 1) {
+                val (controlPoint1, controlPoint2) = controlPoints[i]
+                cubicTo(
+                    controlPoint1.x, controlPoint1.y,
+                    controlPoint2.x, controlPoint2.y,
+                    points[i+1].x, points[i+1].y
+                )
+            }
+        }
+
+        drawPath(
+            path = graphPath,
+            color = dotAndGraphColor,
+            style = Stroke(
+                width = 5f,
+                cap = StrokeCap.Round,
+            ),
+        )
+
+        points.forEach { point ->
             drawCircle(
-                color = whiteColor,
+                color = dotStrokeColor,
                 radius = 14f,
-                center = Offset(x, y)
+                center = Offset(point.x, point.y)
             )
+
             drawCircle(
-                color = primaryColor,
+                color = dotAndGraphColor,
                 radius = 10f,
-                center = Offset(x, y)
+                center = Offset(point.x, point.y)
             )
         }
+
+        val fillPath = graphPath.apply {
+            lineTo(points.last().x, graphHeight)
+            lineTo(points.first().x, graphHeight)
+            close()
+        }
+
+        drawPath(
+            path = fillPath,
+            brush = Brush.verticalGradient(
+                listOf(
+                    dotAndGraphColor.copy(alpha = 0.5f),
+                    Color.Transparent
+                ),
+                endY = graphHeight
+            )
+        )
+
     }
 }
 
