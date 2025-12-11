@@ -21,7 +21,8 @@ fun RunEntity.toRun(): Run {
         ),
         maxSpeedKmh = maxSpeedKmh,
         totalElevationMeters = totalElevationMeters,
-        mapPictureUrl = mapPictureUrl
+        mapPictureUrl = mapPictureUrl,
+        rawMap = mapImageRaw,
     )
 }
 
@@ -36,6 +37,7 @@ fun Run.toRunEntity(): RunEntity {
         distanceMeters = distanceMeters,
         avgSpeedKmh = avgSpeedKmh,
         totalElevationMeters = totalElevationMeters,
-        mapPictureUrl = mapPictureUrl
+        mapPictureUrl = mapPictureUrl,
+        mapImageRaw = rawMap
     )
 }

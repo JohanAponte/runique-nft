@@ -10,4 +10,5 @@ data class RunUi(
     val maxSpeed: String,
     val totalElevation: String,
     val mapPictureUrl: String?,
+    val mapPictureBytes: ByteArray? = null
 )

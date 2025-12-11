@@ -54,7 +54,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
-import coil.compose.SubcomposeAsyncImage
+import coil.compose.LocalImageLoader
 import com.example.core.domain.location.Location
 import com.example.core.domain.run.Run
 import com.example.core.presentation.designsystem.CalendarIcon
@@ -62,6 +62,7 @@ import com.example.core.presentation.designsystem.LocationIcon
 import com.example.core.presentation.designsystem.R
 import com.example.core.presentation.designsystem.RunOutlinedIcon
 import com.example.core.presentation.designsystem.RuniqueTheme
+import com.example.core.presentation.designsystem.components.util.LocalImageLoader
 import com.example.core.presentation.ui.getLocationName
 import com.example.core.presentation.ui.mapper.toRunUi
 import com.example.core.presentation.ui.model.RunDataUi
@@ -115,7 +116,7 @@ fun RunCard(
             modifier = modifier
                 .clip(RoundedCornerShape(15.dp))
                 .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
-                .pointerInput(UInt){
+                .pointerInput(UInt) {
                     detectTapGestures(
                         onLongPress = {
                             showDeleteDropDown = true
@@ -133,7 +134,7 @@ fun RunCard(
                 )*/
                 .padding(16.dp),
         ) {
-            MapImage(imageUrl = runUi.mapPictureUrl)
+            MapImage(imageBytes = runUi.mapPictureBytes)
             Spacer(modifier = Modifier.height(16.dp))
 
             RunningTimeSection(
@@ -314,15 +315,15 @@ private fun DataGrid(
 }
 
 @Composable
-private fun MapImage(imageUrl: String?, modifier: Modifier = Modifier) {
-    SubcomposeAsyncImage(
-        model = imageUrl,
+private fun MapImage(imageBytes: ByteArray?, modifier: Modifier = Modifier) {
+    LocalImageLoader(
+        imageBytes = imageBytes,
         contentDescription = stringResource(R.string.run_map),
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(16 / 9f)
             .clip(RoundedCornerShape(15.dp)),
-        loading = {
+        placeholder = {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center

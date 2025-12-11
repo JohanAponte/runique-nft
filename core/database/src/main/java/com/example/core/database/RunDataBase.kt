@@ -15,7 +15,7 @@ import com.example.core.database.entities.RunPendingSyncEntity
         RunPendingSyncEntity::class,
         DeletedRunSyncEntity::class
     ],
-    version = 2
+    version = 5
 )
 
 abstract class RunDataBase : RoomDatabase() {

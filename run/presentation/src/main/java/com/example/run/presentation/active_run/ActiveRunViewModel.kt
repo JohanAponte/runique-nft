@@ -164,7 +164,8 @@ class ActiveRunViewModel(
                 location = state.currentLocation ?: Location(0.0, 0.0),
                 maxSpeedKmh = LocationDataCalculator.getMaxSpeedKmh(locations),
                 totalElevationMeters = LocationDataCalculator.getTotalElevationMetes(locations),
-                mapPictureUrl = null
+                mapPictureUrl = null,
+                rawMap = mapPictureBytes
             )
 
             runningTracker.finishRun()
