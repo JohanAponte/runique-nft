@@ -1,10 +1,12 @@
 package com.example.core.presentation.designsystem.components
 
+import android.graphics.BitmapFactory
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -54,7 +57,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
-import coil.compose.LocalImageLoader
 import com.example.core.domain.location.Location
 import com.example.core.domain.run.Run
 import com.example.core.presentation.designsystem.CalendarIcon
@@ -62,7 +64,6 @@ import com.example.core.presentation.designsystem.LocationIcon
 import com.example.core.presentation.designsystem.R
 import com.example.core.presentation.designsystem.RunOutlinedIcon
 import com.example.core.presentation.designsystem.RuniqueTheme
-import com.example.core.presentation.designsystem.components.util.LocalImageLoader
 import com.example.core.presentation.ui.getLocationName
 import com.example.core.presentation.ui.mapper.toRunUi
 import com.example.core.presentation.ui.model.RunDataUi
@@ -349,6 +350,33 @@ private fun MapImage(imageBytes: ByteArray?, modifier: Modifier = Modifier) {
             }
         }
     )
+}
+
+@Composable
+fun LocalImageLoader(
+    imageBytes: ByteArray?,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    placeholder: @Composable () -> Unit = {},
+    error: @Composable () -> Unit = {}
+) {
+    if (imageBytes != null) {
+        val bitmap = remember(imageBytes) {
+            BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        }
+
+        if (bitmap != null) {
+            Image(
+                bitmap = bitmap.asImageBitmap(),
+                contentDescription = contentDescription,
+                modifier = modifier
+            )
+        } else {
+            error()
+        }
+    } else {
+        placeholder()
+    }
 }
 
 @Composable
