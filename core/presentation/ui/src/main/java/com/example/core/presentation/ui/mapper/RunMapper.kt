@@ -30,6 +30,7 @@ fun Run.toRunUi(): RunUi {
         maxSpeed = maxSpeedKmh.toFormattedKmh(),
         pace = duration.toFormattedPace(distanceKm),
         totalElevation = totalElevationMeters.toFormattedMeters(),
-        mapPictureUrl = mapPictureUrl
+        mapPictureUrl = mapPictureUrl,
+        mapPictureBytes = rawMap
     )
 }
