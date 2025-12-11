@@ -49,7 +49,7 @@ import com.example.core.presentation.designsystem.components.GradientBackground
 import com.example.core.presentation.designsystem.components.RuniqueActionButton
 import com.example.core.presentation.designsystem.components.RuniquePasswordTextField
 import com.example.core.presentation.designsystem.components.RuniqueTextField
-import com.example.core.presentation.designsystem.components.util.RuniqueMessageSnackBar
+import com.example.core.presentation.designsystem.components.RuniqueMessageSnackBar
 import com.example.core.presentation.ui.ObserveAsEvents
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
