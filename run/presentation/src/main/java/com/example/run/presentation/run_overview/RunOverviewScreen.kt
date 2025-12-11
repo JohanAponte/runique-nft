@@ -33,7 +33,7 @@ import com.example.core.presentation.designsystem.components.RuniqueFloatingActi
 import com.example.core.presentation.designsystem.components.RuniqueScaffold
 import com.example.core.presentation.designsystem.components.RuniqueToolbar
 import com.example.core.presentation.designsystem.components.util.DropDownItem
-import com.example.core.presentation.designsystem.components.util.RuniqueMessageSnackBar
+import com.example.core.presentation.designsystem.components.RuniqueMessageSnackBar
 import com.example.core.presentation.designsystem.components.RunCard
 import org.koin.androidx.compose.koinViewModel
 
